@@ -4,6 +4,7 @@ import { Screen } from "../../../src/components/Screen";
 import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
+import { AdminTabs } from "../../../src/components/AdminTabs";
 import { theme } from "../../../src/theme";
 import { useAppStore } from "../../../src/store/useAppStore";
 import { PERMISSIONS, ROLE_BASE_PERMISSIONS } from "../../../src/lib/permissions";
@@ -32,6 +33,7 @@ export default function RolesScreen() {
         title="Role & Permissions"
         subtitle="Super Admin can lock or extend access per role. Company limits apply on top."
       />
+      <AdminTabs />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.stack}>
           {roles.map((role) => (

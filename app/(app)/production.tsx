@@ -111,6 +111,7 @@ export default function ProductionScreen() {
           { key: "due", label: "Due", width: 120 }
         ]}
         rows={workOrderRows}
+        summary={`${workOrderRows.length} active work orders`}
       />
 
       <SectionHeader
@@ -124,6 +125,7 @@ export default function ProductionScreen() {
           { key: "qty", label: "Qty/Unit", width: 120 }
         ]}
         rows={bomRows}
+        summary={`${bomRows.length} BOM lines`}
       />
     </Screen>
   );

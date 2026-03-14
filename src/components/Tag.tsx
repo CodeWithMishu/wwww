@@ -8,11 +8,11 @@ type TagProps = {
 };
 
 const toneStyles = {
-  default: theme.colors.surfaceMuted,
-  success: "#DFF3EE",
-  warning: "#FFF1D4",
-  danger: "#FCE1DD",
-  info: "#DCEBFF"
+  default: "#EAF0F8",
+  success: "#E5F5EA",
+  warning: "#FFF4DA",
+  danger: "#FDE9EA",
+  info: "#E2F1FF"
 };
 
 export const Tag = ({ label, tone = "default" }: TagProps) => {
@@ -27,12 +27,16 @@ const styles = StyleSheet.create({
   tag: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 999,
-    alignSelf: "flex-start"
+    borderRadius: theme.radius.pill,
+    alignSelf: "flex-start",
+    borderWidth: 1,
+    borderColor: "rgba(17, 38, 56, 0.08)"
   },
   text: {
     fontSize: 11,
+    fontFamily: theme.typography.body,
     fontWeight: "600",
-    color: theme.colors.ink
+    color: theme.colors.ink,
+    letterSpacing: 0.2
   }
 });

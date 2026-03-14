@@ -5,6 +5,8 @@ import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
 import { Tag } from "../../../src/components/Tag";
+import { AdminTabs } from "../../../src/components/AdminTabs";
+import { FormField } from "../../../src/components/FormField";
 import { theme } from "../../../src/theme";
 import { useAppStore } from "../../../src/store/useAppStore";
 import { PERMISSIONS } from "../../../src/lib/permissions";
@@ -72,28 +74,32 @@ export default function CompaniesScreen() {
         title="Company Access"
         subtitle="Create companies and control their feature entitlements."
       />
+      <AdminTabs />
       <ScrollView contentContainerStyle={styles.scroll}>
         <Card style={styles.card}>
-          <Text style={styles.label}>New company</Text>
-          <TextInput
-            value={name}
-            onChangeText={(value) => {
-              setName(value);
-              if (error) {
-                setError("");
-              }
-            }}
-            placeholder="Company name"
-            placeholderTextColor={theme.colors.inkSubtle}
-            style={styles.input}
-          />
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          <FormField label="New company" error={error || undefined}>
+            <TextInput
+              value={name}
+              onChangeText={(value) => {
+                setName(value);
+                if (error) {
+                  setError("");
+                }
+              }}
+              placeholder="Company name"
+              placeholderTextColor={theme.colors.inkSubtle}
+              accessibilityLabel="Company name"
+              style={styles.input}
+            />
+          </FormField>
           <Text style={styles.label}>Plan</Text>
           <View style={styles.planRow}>
             {plans.map((tier) => (
               <Pressable
                 key={tier}
                 onPress={() => setPlan(tier)}
+                accessibilityRole="button"
+                accessibilityLabel={`Select ${tier} plan`}
                 style={[styles.planChip, plan === tier && styles.planChipActive]}
               >
                 <Text style={[styles.planText, plan === tier && styles.planTextActive]}>
@@ -105,6 +111,8 @@ export default function CompaniesScreen() {
           <Pressable
             onPress={handleCreate}
             disabled={!canCreate}
+            accessibilityRole="button"
+            accessibilityLabel="Create company"
             style={[styles.primaryButton, !canCreate && styles.disabledButton]}
           >
             <Text style={styles.primaryText}>Create company</Text>
@@ -189,11 +197,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: theme.spacing.sm,
     backgroundColor: theme.colors.surface
-  },
-  errorText: {
-    marginBottom: theme.spacing.sm,
-    fontSize: 12,
-    color: theme.colors.danger
   },
   planRow: {
     flexDirection: "row",

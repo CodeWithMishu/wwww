@@ -4,6 +4,7 @@ import { Screen } from "../../../src/components/Screen";
 import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
+import { AdminTabs } from "../../../src/components/AdminTabs";
 import { Tag } from "../../../src/components/Tag";
 import { theme } from "../../../src/theme";
 import { useAppStore } from "../../../src/store/useAppStore";
@@ -125,6 +126,7 @@ export default function ProductsScreen() {
         title="Product Master Data"
         subtitle="Adjust product thresholds and lead times."
       />
+      <AdminTabs />
       <View style={styles.stack}>
         {items.map((item) => (
           <ItemEditor

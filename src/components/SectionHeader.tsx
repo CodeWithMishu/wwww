@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexWrap: "wrap",
     rowGap: theme.spacing.xs,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.md
   },
   textBlock: {
     flex: 1,
@@ -35,13 +35,17 @@ const styles = StyleSheet.create({
     paddingRight: theme.spacing.md
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
+    fontFamily: theme.typography.heading,
     fontWeight: "700",
+    letterSpacing: 0.2,
     color: theme.colors.ink
   },
   subtitle: {
-    marginTop: 4,
+    marginTop: 6,
     fontSize: 13,
-    color: theme.colors.inkSubtle
+    fontFamily: theme.typography.body,
+    color: theme.colors.inkSubtle,
+    lineHeight: 19
   }
 });

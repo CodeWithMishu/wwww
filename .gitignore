@@ -1,0 +1,37 @@
+# Added by GitGuard
+dist/
+node_modules/
+
+# Added by GitGuard (Node.js, React)
+# Environment files contain secrets, API keys, and database credentials that should never be committed
+.env
+# Local environment overrides often contain developer-specific secrets
+.env.local
+# Environment-specific local files may contain sensitive overrides
+.env.*.local
+# Development environment secrets should not be shared
+.env.development.local
+# Production secrets must never be committed to version control
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+build/
+out/
+coverage/
+# Test environment secrets should not be committed
+.env.test.local
+
+# Added by GitGuard (Node.js, React, Gradle (Kotlin DSL))
+# Local Spring properties may contain secrets and should not be committed
+application-local.properties
+# Local Spring YAML config may contain secrets
+application-local.yml
+# Local Spring YAML config may contain secrets
+application-local.yaml
+*.class
+*.jar
+*.war
+bin/
+.gradle/
+gradle.properties

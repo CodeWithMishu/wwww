@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
   },
   bar: {
     flex: 1,
-    borderRadius: theme.radius.sm
+    borderRadius: theme.radius.sm,
+    minHeight: 8,
+    opacity: 0.9
   }
 });

@@ -26,23 +26,28 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
+    borderTopWidth: 3,
+    borderTopColor: "rgba(1, 118, 211, 0.4)"
   },
   label: {
     fontSize: 12,
+    fontFamily: theme.typography.body,
     color: theme.colors.inkSubtle,
     textTransform: "uppercase",
-    letterSpacing: 1
+    letterSpacing: 0.9
   },
   value: {
     marginTop: theme.spacing.sm,
     fontSize: 24,
+    fontFamily: theme.typography.heading,
     fontWeight: "700",
     color: theme.colors.ink
   },
   delta: {
     marginTop: 6,
     fontSize: 12,
+    fontFamily: theme.typography.body,
     color: theme.colors.accentDark
   }
 });

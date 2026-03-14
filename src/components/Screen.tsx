@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { theme } from "../theme";
 
 type ScreenProps = {
@@ -10,29 +10,41 @@ type ScreenProps = {
 
 export const Screen = ({ children, padded = true, scroll = true }: ScreenProps) => {
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.safe}>
       {scroll ? (
-        <ScrollView contentContainerStyle={[styles.content, padded && styles.padded]}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.content, padded && styles.padded]}
+          showsVerticalScrollIndicator
+          alwaysBounceVertical={false}
+        >
           {children}
         </ScrollView>
       ) : (
         <View style={[styles.content, padded && styles.padded]}>{children}</View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
+    minHeight: 0
   },
+  scrollView: {
+    flex: 1,
+    minHeight: 0
+  },
+  
   content: {
     flexGrow: 1,
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: theme.spacing.xxl,
     width: "100%",
     maxWidth: 1200,
-    alignSelf: "center"
+    alignSelf: "center",
+    minHeight: "100%"
   },
   padded: {
     paddingHorizontal: theme.spacing.lg,

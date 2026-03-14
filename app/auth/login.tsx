@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { router } from "expo-router";
 import { Screen } from "../../src/components/Screen";
 import { Card } from "../../src/components/Card";
+import { FormField } from "../../src/components/FormField";
 import { theme } from "../../src/theme";
 import { useAppStore } from "../../src/store/useAppStore";
+import { useUiStore } from "../../src/store/useUiStore";
 
 export default function LoginScreen() {
   const users = useAppStore((state) => state.users);
   const companies = useAppStore((state) => state.companies);
   const loginAs = useAppStore((state) => state.loginAs);
+  const showToast = useUiStore((state) => state.showToast);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,10 +22,12 @@ export default function LoginScreen() {
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail || !password) {
       setError("Enter your email and password.");
+      showToast("Enter your email and password.", "warning");
       return;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(normalizedEmail)) {
       setError("Enter a valid email address.");
+      showToast("Enter a valid email address.", "warning");
       return;
     }
     const matchedUser = users.find(
@@ -30,19 +35,23 @@ export default function LoginScreen() {
     );
     if (!matchedUser || matchedUser.password !== password) {
       setError("Invalid email or password.");
+      showToast("Invalid email or password.", "danger");
       return;
     }
     const company = companies.find((item) => item.id === matchedUser.companyId);
     if (company && !company.active) {
       setError("This company is suspended. Contact your administrator.");
+      showToast("Company is suspended. Contact your administrator.", "warning");
       return;
     }
     if (!matchedUser.active) {
       setError("This account is inactive. Contact your administrator.");
+      showToast("This account is inactive.", "warning");
       return;
     }
     setError("");
     loginAs(matchedUser.id);
+    showToast(`Welcome back, ${matchedUser.name}.`, "success");
     router.replace("/dashboard");
   };
 
@@ -50,60 +59,70 @@ export default function LoginScreen() {
     <Screen padded={false} scroll={false}>
       <View style={styles.container}>
         <View style={styles.hero}>
-          <Text style={styles.brand}>Warehouse WMS</Text>
-          <Text style={styles.subtitle}>Enterprise Control Center</Text>
-          <Text style={styles.caption}>
-            Sign in with your assigned email and password to access your role-based
-            workspace.
-          </Text>
+          <Image
+            source={require("../../logo1.png")}
+            style={styles.loginLogo}
+            resizeMode="contain"
+            accessible
+            accessibilityLabel="Mindbridge Innovations logo"
+          />
         </View>
         <Card style={styles.card}>
           <Text style={styles.title}>Sign in</Text>
-          <TextInput
-            value={email}
-            onChangeText={(value) => {
-              setEmail(value);
-              if (error) {
-                setError("");
-              }
-            }}
-            placeholder="Email address"
-            placeholderTextColor={theme.colors.inkSubtle}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            style={styles.input}
-          />
-          <View style={styles.passwordRow}>
+          <FormField label="Email" error={error ? " " : undefined}>
             <TextInput
-              value={password}
+              value={email}
               onChangeText={(value) => {
-                setPassword(value);
+                setEmail(value);
                 if (error) {
                   setError("");
                 }
               }}
-              placeholder="Password"
+              placeholder="Email address"
               placeholderTextColor={theme.colors.inkSubtle}
-              secureTextEntry={!showPassword}
               autoCapitalize="none"
               autoCorrect={false}
-              returnKeyType="go"
-              onSubmitEditing={handleLogin}
-              style={[styles.input, styles.passwordInput]}
+              keyboardType="email-address"
+              accessibilityLabel="Email address"
+              style={styles.input}
             />
-            <Pressable
-              onPress={() => setShowPassword((prev) => !prev)}
-              style={styles.passwordToggle}
-            >
-              <Text style={styles.passwordToggleText}>
-                {showPassword ? "Hide" : "Show"}
-              </Text>
-            </Pressable>
-          </View>
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+          </FormField>
+          <FormField label="Password" error={error}>
+            <View style={styles.passwordRow}>
+              <TextInput
+                value={password}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  if (error) {
+                    setError("");
+                  }
+                }}
+                placeholder="Password"
+                placeholderTextColor={theme.colors.inkSubtle}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="go"
+                onSubmitEditing={handleLogin}
+                accessibilityLabel="Password"
+                style={[styles.input, styles.passwordInput]}
+              />
+              <Pressable
+                onPress={() => setShowPassword((prev) => !prev)}
+                style={styles.passwordToggle}
+                accessibilityRole="button"
+                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+              >
+                <Text style={styles.passwordToggleText}>
+                  {showPassword ? "Hide" : "Show"}
+                </Text>
+              </Pressable>
+            </View>
+          </FormField>
           <Pressable
             onPress={handleLogin}
+            accessibilityRole="button"
+            accessibilityLabel="Login"
             style={({ pressed }) => [
               styles.primaryButton,
               pressed && styles.primaryButtonPressed
@@ -124,41 +143,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.xl,
+    paddingTop: theme.spacing.xxl,
     paddingBottom: theme.spacing.xl,
     justifyContent: "center",
-    gap: theme.spacing.lg
+    gap: theme.spacing.xl
   },
   hero: {
     alignItems: "center",
     paddingHorizontal: theme.spacing.md,
-    gap: theme.spacing.xs
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.sm
   },
-  brand: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: theme.colors.ink
-  },
-  subtitle: {
-    fontSize: 13,
-    letterSpacing: 2,
-    textTransform: "uppercase",
-    color: theme.colors.inkSubtle
+  loginLogo: {
+    width: 360,
+    height: 170,
+    maxWidth: "100%"
   },
   caption: {
     marginTop: theme.spacing.sm,
     fontSize: 13,
+    fontFamily: theme.typography.body,
     textAlign: "center",
-    color: theme.colors.inkSubtle
+    color: theme.colors.inkSubtle,
+    lineHeight: 20,
+    maxWidth: 560
   },
   card: {
     alignSelf: "center",
     width: "100%",
     maxWidth: 420,
-    padding: theme.spacing.lg
+    padding: theme.spacing.lg,
+    borderColor: theme.colors.borderStrong,
+    backgroundColor: "rgba(255,255,255,0.94)"
   },
   title: {
-    fontSize: 18,
+    fontSize: 19,
+    fontFamily: theme.typography.heading,
     fontWeight: "700",
     color: theme.colors.ink,
     marginBottom: theme.spacing.md
@@ -170,8 +190,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     fontSize: 14,
+    fontFamily: theme.typography.body,
     marginBottom: theme.spacing.sm,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surfaceMuted
   },
   passwordRow: {
     flexDirection: "row",
@@ -186,27 +207,30 @@ const styles = StyleSheet.create({
   passwordToggle: {
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: theme.radius.sm,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
     borderColor: theme.colors.border,
     backgroundColor: theme.colors.surfaceMuted
   },
   passwordToggleText: {
     fontSize: 12,
+    fontFamily: theme.typography.body,
     fontWeight: "700",
-    color: theme.colors.ink
-  },
-  error: {
-    marginTop: theme.spacing.sm,
-    fontSize: 12,
-    color: theme.colors.danger
+    color: theme.colors.accentDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   primaryButton: {
     marginTop: theme.spacing.md,
     alignItems: "center",
     backgroundColor: theme.colors.accent,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.sm
+    paddingVertical: 12,
+    borderRadius: theme.radius.pill,
+    shadowColor: theme.colors.shadowStrong,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 4
   },
   primaryButtonPressed: {
     opacity: 0.9,
@@ -214,11 +238,15 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     color: "#FFFFFF",
-    fontWeight: "700"
+    fontFamily: theme.typography.body,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.8
   },
   helpText: {
     marginTop: theme.spacing.sm,
     fontSize: 12,
+    fontFamily: theme.typography.body,
     textAlign: "center",
     color: theme.colors.inkSubtle
   }

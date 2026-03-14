@@ -180,7 +180,12 @@ export default function DataHubScreen() {
         >
           <Text style={styles.ghostText}>Copy CSV</Text>
         </Pressable>
-        {status ? <Text style={styles.status}>{status}</Text> : null}
+        {status ? (
+          <View style={styles.statusNotice}>
+            <Text style={styles.statusLabel}>Status</Text>
+            <Text style={styles.status}>{status}</Text>
+          </View>
+        ) : null}
       </Card>
 
       <Card style={styles.card}>
@@ -312,8 +317,25 @@ const styles = StyleSheet.create({
     textAlignVertical: "top"
   },
   status: {
-    marginTop: theme.spacing.sm,
     fontSize: 12,
-    color: theme.colors.inkSubtle
+    fontFamily: theme.typography.body,
+    color: theme.colors.textSecondary
+  },
+  statusNotice: {
+    marginTop: theme.spacing.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surfaceMuted,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.sm
+  },
+  statusLabel: {
+    fontSize: 11,
+    fontFamily: theme.typography.body,
+    fontWeight: "700",
+    color: theme.colors.textPrimary,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginBottom: 2
   }
 });

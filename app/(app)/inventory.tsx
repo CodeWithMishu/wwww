@@ -1,5 +1,5 @@
 import React, { useDeferredValue, useMemo, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Screen } from "../../src/components/Screen";
 import { SectionHeader } from "../../src/components/SectionHeader";
 import { Card } from "../../src/components/Card";
@@ -24,6 +24,7 @@ type InventoryRow = {
 export default function InventoryScreen() {
   const canView = useCan("inventory.view");
   const [query, setQuery] = useState("");
+  const [stockFilter, setStockFilter] = useState<"all" | "low" | "healthy">("all");
   const deferredQuery = useDeferredValue(query);
   const items = useAppStore((state) => state.items);
   const bins = useAppStore((state) => state.bins);
@@ -49,17 +50,27 @@ export default function InventoryScreen() {
   }, [bins, inventory, items]);
 
   const filteredRows = useMemo(() => {
-    if (!deferredQuery.trim()) {
-      return rows;
-    }
-    const needle = deferredQuery.toLowerCase();
-    return rows.filter(
-      (row) =>
-        row.item.toLowerCase().includes(needle) ||
-        row.bin.toLowerCase().includes(needle) ||
-        row.lot.toLowerCase().includes(needle)
-    );
-  }, [deferredQuery, rows]);
+    const needle = deferredQuery.trim().toLowerCase();
+    const searched = !needle
+      ? rows
+      : rows.filter(
+          (row) =>
+            row.item.toLowerCase().includes(needle) ||
+            row.bin.toLowerCase().includes(needle) ||
+            row.lot.toLowerCase().includes(needle)
+        );
+
+    return searched.filter((row) => {
+      if (stockFilter === "all") {
+        return true;
+      }
+      const available = Number(row.available.replace(/,/g, ""));
+      if (stockFilter === "low") {
+        return available < 100;
+      }
+      return available >= 100;
+    });
+  }, [deferredQuery, rows, stockFilter]);
 
   if (!canView) {
     return (
@@ -91,6 +102,40 @@ export default function InventoryScreen() {
           <Tag label="Reserved" tone="warning" />
           <Tag label="Available" tone="success" />
         </View>
+        <View style={styles.filterRow}>
+          <Pressable
+            onPress={() => setStockFilter("all")}
+            style={[styles.filterChip, stockFilter === "all" && styles.filterChipActive]}
+          >
+            <Text style={[styles.filterText, stockFilter === "all" && styles.filterTextActive]}>
+              All
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setStockFilter("low")}
+            style={[styles.filterChip, stockFilter === "low" && styles.filterChipActive]}
+          >
+            <Text style={[styles.filterText, stockFilter === "low" && styles.filterTextActive]}>
+              Low Stock
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setStockFilter("healthy")}
+            style={[
+              styles.filterChip,
+              stockFilter === "healthy" && styles.filterChipActive
+            ]}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                stockFilter === "healthy" && styles.filterTextActive
+              ]}
+            >
+              Healthy
+            </Text>
+          </Pressable>
+        </View>
       </Card>
 
       <SectionHeader
@@ -107,6 +152,7 @@ export default function InventoryScreen() {
           { key: "lot", label: "Lot", width: 120 }
         ]}
         rows={filteredRows}
+        summary={`${filteredRows.length} rows • filter: ${stockFilter}`}
       />
     </Screen>
   );
@@ -138,5 +184,33 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: theme.spacing.sm,
     marginTop: theme.spacing.sm
+  },
+  filterRow: {
+    marginTop: theme.spacing.sm,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: theme.spacing.sm
+  },
+  filterChip: {
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: theme.colors.surface
+  },
+  filterChipActive: {
+    borderColor: theme.colors.accentDark,
+    backgroundColor: theme.colors.accentSoft
+  },
+  filterText: {
+    fontSize: 12,
+    fontFamily: theme.typography.body,
+    fontWeight: "600",
+    color: theme.colors.textSecondary
+  },
+  filterTextActive: {
+    color: theme.colors.accentDark,
+    fontWeight: "700"
   }
 });

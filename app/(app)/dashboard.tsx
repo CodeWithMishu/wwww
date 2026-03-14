@@ -10,6 +10,7 @@ import { theme } from "../../src/theme";
 import { useAppStore } from "../../src/store/useAppStore";
 import { useCan, useCurrentUser } from "../../src/hooks/useCurrentUser";
 import { AccessDenied } from "../../src/components/AccessDenied";
+import { LogoMark } from "../../src/components/LogoMark";
 import { formatDelta, formatNumber } from "../../src/lib/format";
 
 export default function DashboardScreen() {
@@ -51,6 +52,28 @@ export default function DashboardScreen() {
           <StatCard label="Suspended" value={String(suspendedCompanies)} />
           <StatCard label="Admins" value={String(adminCount)} />
           <StatCard label="Users" value={String(totalUsers)} />
+        </View>
+
+        <SectionHeader title="Quick Actions" subtitle="Jump directly to key workflows." />
+        <View style={styles.quickActions}>
+          <Link href="/admin/companies" asChild>
+            <Pressable style={styles.quickAction}>
+              <Text style={styles.quickActionTitle}>Open Companies</Text>
+              <Text style={styles.quickActionSub}>Manage plans and access limits</Text>
+            </Pressable>
+          </Link>
+          <Link href="/admin/users" asChild>
+            <Pressable style={styles.quickAction}>
+              <Text style={styles.quickActionTitle}>Open Users</Text>
+              <Text style={styles.quickActionSub}>Create and update user accounts</Text>
+            </Pressable>
+          </Link>
+          <Link href="/analytics" asChild>
+            <Pressable style={styles.quickAction}>
+              <Text style={styles.quickActionTitle}>View Analytics</Text>
+              <Text style={styles.quickActionSub}>Review KPI performance trends</Text>
+            </Pressable>
+          </Link>
         </View>
 
         <SectionHeader
@@ -115,10 +138,33 @@ export default function DashboardScreen() {
 
   return (
     <Screen>
+      <View style={styles.logoBlock}>
+        <LogoMark size="sm" withWordmark />
+      </View>
       <SectionHeader
         title={`Welcome back, ${currentUser?.name ?? "Operator"}`}
         subtitle="Live operational snapshot for the last 24 hours."
       />
+      <View style={styles.quickActions}>
+        <Link href="/inventory" asChild>
+          <Pressable style={styles.quickAction}>
+            <Text style={styles.quickActionTitle}>Inventory Control</Text>
+            <Text style={styles.quickActionSub}>Track on-hand and available stock</Text>
+          </Pressable>
+        </Link>
+        <Link href="/operations" asChild>
+          <Pressable style={styles.quickAction}>
+            <Text style={styles.quickActionTitle}>Operations Hub</Text>
+            <Text style={styles.quickActionSub}>Monitor inbound, outbound, and cycle counts</Text>
+          </Pressable>
+        </Link>
+        <Link href="/production" asChild>
+          <Pressable style={styles.quickAction}>
+            <Text style={styles.quickActionTitle}>Production Forecast</Text>
+            <Text style={styles.quickActionSub}>Check BOM constraints and work orders</Text>
+          </Pressable>
+        </Link>
+      </View>
       {latestEvent ? (
         <Card style={styles.auditCard}>
           <Text style={styles.auditTitle}>Latest Action</Text>
@@ -193,11 +239,41 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
+  logoBlock: {
+    marginBottom: theme.spacing.sm
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: theme.spacing.md,
     marginBottom: theme.spacing.lg
+  },
+  quickActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg
+  },
+  quickAction: {
+    minWidth: 200,
+    flex: 1,
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surface,
+    padding: theme.spacing.md
+  },
+  quickActionTitle: {
+    fontSize: 14,
+    fontFamily: theme.typography.body,
+    fontWeight: "700",
+    color: theme.colors.textPrimary
+  },
+  quickActionSub: {
+    marginTop: 4,
+    fontSize: 12,
+    fontFamily: theme.typography.body,
+    color: theme.colors.textSecondary
   },
   auditCard: {
     marginBottom: theme.spacing.lg

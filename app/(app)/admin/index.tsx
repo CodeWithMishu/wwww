@@ -6,6 +6,7 @@ import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
 import { RoleBadge } from "../../../src/components/RoleBadge";
+import { AdminTabs } from "../../../src/components/AdminTabs";
 import { theme } from "../../../src/theme";
 import { useCurrentUser } from "../../../src/hooks/useCurrentUser";
 import { useCan } from "../../../src/hooks/useCurrentUser";
@@ -37,6 +38,7 @@ export default function AdminHome() {
         title="Admin Center"
         subtitle="Supervise users, permissions, and product masters."
       />
+      <AdminTabs />
       <Card style={styles.profileCard}>
         <View style={styles.profileRow}>
           <View>

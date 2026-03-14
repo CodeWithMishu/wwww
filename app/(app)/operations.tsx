@@ -106,6 +106,7 @@ export default function OperationsScreen() {
           qty: formatNumber(so.qty),
           status: so.status
         }))}
+        summary={`${salesOrders.length} outbound orders`}
       />
 
       <SectionHeader
@@ -122,6 +123,7 @@ export default function OperationsScreen() {
           { key: "status", label: "Status", width: 130 }
         ]}
         rows={transfers}
+        summary={`${transfers.length} transfer records`}
       />
 
       <SectionHeader

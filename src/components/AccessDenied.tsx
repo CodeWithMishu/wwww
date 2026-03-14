@@ -22,19 +22,24 @@ export const AccessDenied = ({
 const styles = StyleSheet.create({
   container: {
     padding: theme.spacing.lg,
-    backgroundColor: "#FFF3E6",
+    backgroundColor: "#FFF8EA",
     borderRadius: theme.radius.md,
     borderWidth: 1,
-    borderColor: "#FFD6B5"
+    borderColor: "#F8D9A6",
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.warning
   },
   title: {
     fontSize: 16,
+    fontFamily: theme.typography.heading,
     fontWeight: "700",
     color: theme.colors.ink
   },
   message: {
     marginTop: 6,
     fontSize: 13,
-    color: theme.colors.inkSubtle
+    fontFamily: theme.typography.body,
+    color: theme.colors.inkSubtle,
+    lineHeight: 19
   }
 });

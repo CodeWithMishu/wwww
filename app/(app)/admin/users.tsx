@@ -5,6 +5,8 @@ import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
 import { RoleBadge } from "../../../src/components/RoleBadge";
+import { AdminTabs } from "../../../src/components/AdminTabs";
+import { FormField } from "../../../src/components/FormField";
 import { theme } from "../../../src/theme";
 import { useAppStore } from "../../../src/store/useAppStore";
 import { Role } from "../../../src/types";
@@ -122,51 +124,59 @@ export default function UsersScreen() {
         title="User Management"
         subtitle="Create accounts, assign roles, and manage access."
       />
+      <AdminTabs />
       <Card style={styles.card}>
-        <Text style={styles.label}>New user</Text>
-        <TextInput
-          value={name}
-          onChangeText={(value) => {
-            setName(value);
-            if (createError) {
-              setCreateError("");
-            }
-          }}
-          placeholder="Full name"
-          placeholderTextColor={theme.colors.inkSubtle}
-          style={styles.input}
-        />
-        <TextInput
-          value={email}
-          onChangeText={(value) => {
-            setEmail(value);
-            if (createError) {
-              setCreateError("");
-            }
-          }}
-          placeholder="Email address"
-          placeholderTextColor={theme.colors.inkSubtle}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          style={styles.input}
-        />
-        <TextInput
-          value={password}
-          onChangeText={(value) => {
-            setPassword(value);
-            if (createError) {
-              setCreateError("");
-            }
-          }}
-          placeholder="Temporary password"
-          placeholderTextColor={theme.colors.inkSubtle}
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry
-          style={styles.input}
-        />
-        {createError ? <Text style={styles.errorText}>{createError}</Text> : null}
+        <FormField label="Full name" error={createError ? " " : undefined}>
+          <TextInput
+            value={name}
+            onChangeText={(value) => {
+              setName(value);
+              if (createError) {
+                setCreateError("");
+              }
+            }}
+            placeholder="Full name"
+            placeholderTextColor={theme.colors.inkSubtle}
+            accessibilityLabel="Full name"
+            style={styles.input}
+          />
+        </FormField>
+        <FormField label="Email">
+          <TextInput
+            value={email}
+            onChangeText={(value) => {
+              setEmail(value);
+              if (createError) {
+                setCreateError("");
+              }
+            }}
+            placeholder="Email address"
+            placeholderTextColor={theme.colors.inkSubtle}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            accessibilityLabel="Email address"
+            style={styles.input}
+          />
+        </FormField>
+        <FormField label="Temporary password" error={createError || undefined}>
+          <TextInput
+            value={password}
+            onChangeText={(value) => {
+              setPassword(value);
+              if (createError) {
+                setCreateError("");
+              }
+            }}
+            placeholder="Temporary password"
+            placeholderTextColor={theme.colors.inkSubtle}
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry
+            accessibilityLabel="Temporary password"
+            style={styles.input}
+          />
+        </FormField>
         {isSuperAdmin ? (
           <>
             <Text style={styles.label}>Company</Text>
@@ -175,6 +185,8 @@ export default function UsersScreen() {
                 <Pressable
                   key={company.id}
                   onPress={() => setCompanyId(company.id)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Select company ${company.name}`}
                   style={[
                     styles.roleChip,
                     companyId === company.id && styles.roleChipActive
@@ -203,6 +215,8 @@ export default function UsersScreen() {
             <Pressable
               key={r}
               onPress={() => setRole(r)}
+              accessibilityRole="button"
+              accessibilityLabel={`Select role ${r.replace("_", " ")}`}
               style={[styles.roleChip, role === r && styles.roleChipActive]}
             >
               <Text
@@ -216,6 +230,8 @@ export default function UsersScreen() {
         <Pressable
           onPress={handleCreate}
           disabled={!canCreate}
+          accessibilityRole="button"
+          accessibilityLabel="Create user"
           style={[styles.primaryButton, !canCreate && styles.disabledButton]}
         >
           <Text style={styles.primaryText}>Create user</Text>
@@ -345,11 +361,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: theme.spacing.sm,
     backgroundColor: theme.colors.surface
-  },
-  errorText: {
-    marginBottom: theme.spacing.sm,
-    fontSize: 12,
-    color: theme.colors.danger
   },
   companyNote: {
     marginBottom: theme.spacing.sm,

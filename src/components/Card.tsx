@@ -13,15 +13,17 @@ export const Card = ({ children, style }: CardProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceElevated,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
+    borderLeftWidth: 2,
+    borderLeftColor: "rgba(1, 118, 211, 0.18)",
     shadowColor: theme.colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 1,
-    shadowRadius: 16,
-    elevation: 3
+    shadowRadius: 24,
+    elevation: 4
   }
 });

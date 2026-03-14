@@ -4,6 +4,7 @@ import { Screen } from "../../../src/components/Screen";
 import { SectionHeader } from "../../../src/components/SectionHeader";
 import { Card } from "../../../src/components/Card";
 import { AccessDenied } from "../../../src/components/AccessDenied";
+import { AdminTabs } from "../../../src/components/AdminTabs";
 import { theme } from "../../../src/theme";
 import { useAppStore } from "../../../src/store/useAppStore";
 import { useCan } from "../../../src/hooks/useCurrentUser";
@@ -27,6 +28,7 @@ export default function AuditScreen() {
         title="Audit Log"
         subtitle="Immutable trace of critical system actions."
       />
+      <AdminTabs />
       <View style={styles.stack}>
         {audit.map((event) => (
           <Card key={event.id}>

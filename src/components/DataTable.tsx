@@ -13,12 +13,14 @@ type DataTableProps<T> = {
   columns: Column<T>[];
   rows: T[];
   emptyMessage?: string;
+  summary?: string;
 };
 
 export const DataTable = <T extends { id: string }>({
   columns,
   rows,
-  emptyMessage = "No records"
+  emptyMessage = "No records",
+  summary
 }: DataTableProps<T>) => {
   const defaultWidth = 140;
   const minTableWidth = columns.reduce(
@@ -27,8 +29,10 @@ export const DataTable = <T extends { id: string }>({
   );
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={[styles.table, { minWidth: minTableWidth }]}>
+    <View>
+      {summary ? <Text style={styles.summary}>{summary}</Text> : null}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={[styles.table, { minWidth: minTableWidth }]}> 
         <View style={styles.headerRow}>
           {columns.map((col) => {
             const widthStyle = {
@@ -49,10 +53,16 @@ export const DataTable = <T extends { id: string }>({
           })}
         </View>
         {rows.length === 0 ? (
-          <Text style={styles.empty}>{emptyMessage}</Text>
+          <View style={styles.emptyWrap}>
+            <Text style={styles.emptyTitle}>No Data</Text>
+            <Text style={styles.empty}>{emptyMessage}</Text>
+          </View>
         ) : (
-          rows.map((row) => (
-            <View key={row.id} style={styles.row}>
+          rows.map((row, rowIndex) => (
+            <View
+              key={row.id}
+              style={[styles.row, rowIndex % 2 === 1 && styles.rowAlt]}
+            >
               {columns.map((col) => {
                 const widthStyle = {
                   minWidth: col.width ?? defaultWidth,
@@ -78,8 +88,9 @@ export const DataTable = <T extends { id: string }>({
             </View>
           ))
         )}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -87,21 +98,35 @@ const styles = StyleSheet.create({
   table: {
     borderRadius: theme.radius.md,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     overflow: "hidden",
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
+    shadowColor: theme.colors.shadow,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.6,
+    shadowRadius: 18,
+    elevation: 2
   },
   headerRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.surfaceMuted,
+    backgroundColor: theme.colors.accentSoft,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md
   },
   headerCell: {
     flex: 1,
     fontSize: 12,
+    fontFamily: theme.typography.body,
     fontWeight: "700",
-    color: theme.colors.ink
+    color: theme.colors.accentDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
+  },
+  summary: {
+    marginBottom: theme.spacing.sm,
+    fontSize: 12,
+    fontFamily: theme.typography.body,
+    color: theme.colors.textSecondary
   },
   row: {
     flexDirection: "row",
@@ -110,16 +135,32 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: theme.colors.border
   },
+  rowAlt: {
+    backgroundColor: "rgba(1,118,211,0.025)"
+  },
   cell: {
     flex: 1,
     justifyContent: "center"
   },
   cellText: {
     fontSize: 13,
+    fontFamily: theme.typography.body,
     color: theme.colors.ink
   },
-  empty: {
+  emptyWrap: {
     padding: theme.spacing.md,
-    color: theme.colors.inkSubtle
+    alignItems: "flex-start"
+  },
+  emptyTitle: {
+    fontSize: 13,
+    fontFamily: theme.typography.body,
+    fontWeight: "700",
+    color: theme.colors.textPrimary
+  },
+  empty: {
+    marginTop: 4,
+    fontSize: 12,
+    fontFamily: theme.typography.body,
+    color: theme.colors.textSecondary
   }
 });

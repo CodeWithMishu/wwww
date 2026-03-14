@@ -14,6 +14,7 @@ import { Redirect, Slot, router, usePathname, Link } from "expo-router";
 import { Screen } from "../../src/components/Screen";
 import { SectionHeader } from "../../src/components/SectionHeader";
 import { AccessDenied } from "../../src/components/AccessDenied";
+import { LogoMark } from "../../src/components/LogoMark";
 import { theme } from "../../src/theme";
 import { useCurrentUser } from "../../src/hooks/useCurrentUser";
 import { useAppStore } from "../../src/store/useAppStore";
@@ -67,6 +68,16 @@ export default function AppLayout() {
 
   const [sidebarOpen, setSidebarOpen] = useState(width >= 980);
   const [now, setNow] = useState(getISTNow());
+
+  const routeLabel = useMemo(() => {
+    const match = NAV_ITEMS.find(
+      (item) => pathname === item.href || pathname.startsWith(item.href + "/")
+    );
+    if (pathname.startsWith("/admin")) {
+      return `Admin / ${pathname.split("/").filter(Boolean).slice(1).join(" / ") || "Home"}`;
+    }
+    return match?.label ?? "Workspace";
+  }, [pathname]);
 
   useEffect(() => {
     enableLayoutAnimation();
@@ -150,8 +161,8 @@ export default function AppLayout() {
         ]}
       >
         <View style={styles.brand}>
-          <Text style={styles.brandTitle}>Warehouse WMS</Text>
-          <Text style={styles.brandSub}>Enterprise Control Center</Text>
+          <LogoMark size="sm" withWordmark textColor={theme.colors.navText} />
+          <Text style={styles.productName}>Warehouse Management System</Text>
         </View>
         <View style={styles.nav}>
           {visibleItems.map((item) => {
@@ -181,9 +192,14 @@ export default function AppLayout() {
 
       <View style={styles.main}>
         <SafeAreaView style={styles.topbar}>
-          <Pressable onPress={toggleSidebar} style={styles.menuButton}>
-            <Text style={styles.menuText}>{sidebarOpen ? "Hide" : "Menu"}</Text>
-          </Pressable>
+          <View style={styles.topbarLeft}>
+            <Pressable onPress={toggleSidebar} style={styles.menuButton}>
+              <Text style={styles.menuText}>{sidebarOpen ? "Hide" : "Menu"}</Text>
+            </Pressable>
+            <Text style={styles.breadcrumb} numberOfLines={1} ellipsizeMode="tail">
+              {routeLabel}
+            </Text>
+          </View>
           <View style={styles.topbarInfo}>
             <Text style={styles.time}>{now}</Text>
             <Text style={styles.user} numberOfLines={1} ellipsizeMode="tail">
@@ -211,14 +227,19 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background
   },
   sidebar: {
-    paddingTop: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.md,
     backgroundColor: theme.colors.navBackground,
     borderRightWidth: 1,
-    borderRightColor: "rgba(255,255,255,0.08)"
+    borderRightColor: "rgba(255,255,255,0.12)",
+    shadowColor: theme.colors.shadowStrong,
+    shadowOffset: { width: 6, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 18,
+    elevation: 8
   },
   sidebarOpen: {
-    width: 260
+    width: 280
   },
   sidebarClosed: {
     width: 0,
@@ -235,56 +256,67 @@ const styles = StyleSheet.create({
     bottom: 0
   },
   brand: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.sm,
+    paddingBottom: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.12)"
   },
-  brandTitle: {
-    color: theme.colors.navText,
-    fontSize: 18,
-    fontWeight: "700"
-  },
-  brandSub: {
-    marginTop: 4,
-    color: theme.colors.navMuted,
+  productName: {
+    marginTop: theme.spacing.sm,
     fontSize: 11,
+    fontFamily: theme.typography.body,
+    fontWeight: "700",
+    color: theme.colors.navActive,
     textTransform: "uppercase",
-    letterSpacing: 1
+    letterSpacing: 0.8
   },
   nav: {
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
+    paddingRight: theme.spacing.xs
   },
   navItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 11,
+    paddingHorizontal: 13,
     borderRadius: theme.radius.sm,
-    backgroundColor: "transparent",
+    backgroundColor: "rgba(255,255,255,0.02)",
     borderWidth: 1,
     borderColor: "transparent"
   },
   navItemActive: {
     backgroundColor: theme.colors.navSurface,
-    borderColor: "rgba(255,255,255,0.12)"
+    borderColor: "rgba(99,197,255,0.45)",
+    shadowColor: "rgba(0,0,0,0.22)",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10
   },
   navText: {
     color: theme.colors.navText,
     fontSize: 14,
+    fontFamily: theme.typography.body,
     fontWeight: "600"
   },
   navTextActive: {
-    color: theme.colors.navActive
+    color: theme.colors.navActive,
+    fontWeight: "700"
   },
   link: {
     paddingVertical: 2
   },
   logout: {
-    marginTop: theme.spacing.lg,
+    marginTop: "auto",
+    marginBottom: theme.spacing.lg,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: theme.radius.sm,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)"
+    borderColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "rgba(255,255,255,0.04)"
   },
   logoutText: {
     color: theme.colors.navText,
+    fontFamily: theme.typography.body,
     fontWeight: "600"
   },
   logoutInline: {
@@ -310,7 +342,8 @@ const styles = StyleSheet.create({
     zIndex: 20
   },
   main: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "transparent"
   },
   topbar: {
     flexDirection: "row",
@@ -323,44 +356,85 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },
+  topbarLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.sm,
+    minWidth: 180,
+    flex: 1
+  },
   menuButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: theme.radius.sm,
+    minWidth: 74,
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surfaceMuted
+    borderColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface
   },
   menuText: {
     fontSize: 12,
+    fontFamily: theme.typography.body,
     fontWeight: "700",
-    color: theme.colors.ink
+    color: theme.colors.accentDark,
+    textTransform: "uppercase",
+    letterSpacing: 0.7
+  },
+  breadcrumb: {
+    fontSize: 12,
+    fontFamily: theme.typography.body,
+    color: theme.colors.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+    fontWeight: "700",
+    flexShrink: 1
   },
   topbarInfo: {
-    flex: 1,
+    maxWidth: 340,
     alignItems: "flex-end",
-    minWidth: 0
+    minWidth: 0,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 6,
+    borderRadius: theme.radius.sm,
+    backgroundColor: theme.colors.navBackground,
+    borderWidth: 1,
+    borderColor: "rgba(99,197,255,0.45)",
+    shadowColor: theme.colors.shadowStrong,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 3
   },
   time: {
     fontSize: 12,
-    color: theme.colors.inkSubtle
+    fontFamily: theme.typography.body,
+    color: theme.colors.textOnDark,
+    opacity: 1,
+    fontWeight: "600"
   },
   user: {
-    marginTop: 2,
+    marginTop: 3,
     fontSize: 13,
+    fontFamily: theme.typography.body,
     fontWeight: "600",
-    color: theme.colors.ink,
+    color: "#FFFFFF",
+    opacity: 1,
     textAlign: "right",
     flexShrink: 1
   },
   company: {
     marginTop: 2,
     fontSize: 12,
-    color: theme.colors.inkSubtle,
+    fontFamily: theme.typography.body,
+    color: theme.colors.navActive,
+    opacity: 1,
+    fontWeight: "700",
     textAlign: "right",
     flexShrink: 1
   },
   content: {
-    flex: 1
+    flex: 1,
+    minHeight: 0
   }
 });
