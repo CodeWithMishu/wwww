@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Warehouse WMS",
+    "slug": "warehouse-wms",
+    "version": "1.0.0",
+    "scheme": "warehousewms",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F4F1EC"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
