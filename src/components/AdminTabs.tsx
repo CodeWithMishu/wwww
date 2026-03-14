@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, usePathname } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { theme } from "../theme";
 
@@ -25,11 +25,15 @@ export const AdminTabs = () => {
       {TABS.map((tab) => {
         const active = pathname === tab.href || pathname.startsWith(tab.href + "/");
         return (
-          <Link key={tab.href} href={tab.href} asChild>
-            <Pressable style={[styles.tab, active && styles.tabActive]}>
-              <Text style={[styles.tabText, active && styles.tabTextActive]}>{tab.label}</Text>
-            </Pressable>
-          </Link>
+          <Pressable
+            key={tab.href}
+            onPress={() => router.push(tab.href as never)}
+            accessibilityRole="button"
+            accessibilityLabel={`Open ${tab.label}`}
+            style={[styles.tab, active && styles.tabActive]}
+          >
+            <Text style={[styles.tabText, active && styles.tabTextActive]}>{tab.label}</Text>
+          </Pressable>
         );
       })}
     </View>
